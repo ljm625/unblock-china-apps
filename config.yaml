@@ -1,0 +1,14 @@
+proxy_url: "http://cn-proxy.com"
+proxy_domain:
+  - 126.com
+  - 163.com
+candidate_num: 10
+validate_url: "http://ipservice.163.com/isFromMainland"
+timeout: 2
+check_interval: 60
+# Socket params
+buffer_size: 4096
+delay: 0.0001
+
+proxy_port: 9090
+# proxy_ip:  ## This field overrides the get_ip feature..

@@ -50,7 +50,10 @@ class TheServer:
                 if self.s == self.server:
                     self.on_accept()
                     break
-                self.data = self.s.recv(self.buffer_size)
+                try:
+                    self.data = self.s.recv(self.buffer_size)
+                except:
+                    self.data=''
                 if len(self.data) == 0:
                     self.on_close()
                     break

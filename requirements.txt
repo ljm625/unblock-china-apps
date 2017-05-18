@@ -2,3 +2,4 @@ beautifulsoup4
 requests
 jinja2
 pyyaml
+html5lib

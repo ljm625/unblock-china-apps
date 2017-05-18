@@ -81,16 +81,29 @@ class TheServer:
         except Exception as e:
             pass
         #remove objects from input_list
-        self.input_list.remove(self.s)
-        self.input_list.remove(self.channel[self.s])
-        out = self.channel[self.s]
+        try:
+            self.input_list.remove(self.s)
+        except:
+            pass
+        try:
+            self.input_list.remove(self.channel[self.s])
+        except:
+            pass
+        try:
+            out = self.channel[self.s]
         # close the connection with client
-        self.channel[out].close()  # equivalent to do self.s.close()
+            self.channel[out].close()  # equivalent to do self.s.close()
         # close the connection with remote server
-        self.channel[self.s].close()
+            self.channel[self.s].close()
         # delete both objects from channel dict
-        del self.channel[out]
-        del self.channel[self.s]
+        except: pass
+        try:
+            del self.channel[out]
+        except: pass
+        try:
+            del self.channel[self.s]
+        except:
+            pass
 
     def on_recv(self):
         data = self.data

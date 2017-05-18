@@ -1,141 +1,56 @@
 import socket
-import select
-import time
-import sys
+import SocketServer
+import threading
+from time import sleep
 
 import yaml
 
 from components.proxy_checker import ProxyChecker
 
 
-class Forward(object):
-    def __init__(self):
-        self.forward = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+class Forwarder(threading.Thread):
+    def __init__(self, source, dest):
+        threading.Thread.__init__(self)
+        self.source = source
+        self.dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.dest.connect((dest[0], int(dest[1])))
+        print("Connect to Forwarder:{}:{}".format(dest[0], dest[1]))
 
-    def start(self, host, port):
+    def run(self):
+        # print("starting forwarder... ")
+
         try:
-            self.forward.connect((host, int(port)))
-            return self.forward
+            while True:
+                data = self.dest.recv(4096)
+                if len(data) == 0:
+                    raise Exception("endpoint closed")
+                # print("Received from dest: " + str(len(data)))
+                self.source.write_to_source(data)
         except Exception as e:
+            print("EXCEPTION reading from forwarding socket")
             print(e)
-            return False
 
-class TheServer:
-    input_list = []
-    channel = {}
+        self.source.stop_forwarding()
+        # print("...ending forwarder.")
 
-    def __init__(self, host):
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        port=int(self.get_config()['proxy_port'])
-        self.server.bind((host, port))
-        self.server.listen(200)
-        self.black_list=self.get_config()['proxy_domain']
-        self.buffer_size = self.get_config()['buffer_size']
-        self.delay = self.get_config()['delay']
+    def write_to_dest(self, data):
+        # print("Sending to dest: " + str(len(data)))
+        self.dest.send(data)
+
+    def stop_forwarding(self):
+        # print("...closing forwarding socket")
+        self.dest.close()
+
+
+class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
+    def __init__(self, *args, **kwargs):
         self.proxy = ProxyChecker.get_instance()
+        self.black_list = self.get_config()['proxy_domain']
         while not self.proxy:
-            time.sleep(5)
+            sleep(5)
             print("INFO : Waiting for proxy list to be generated...")
             self.proxy = ProxyChecker.get_instance()
-        print("INFO : Listening on {}:{}".format(host,port))
-
-    def main_loop(self):
-        self.input_list.append(self.server)
-        while 1:
-            time.sleep(self.delay)
-            ss = select.select
-            inputready, outputready, exceptready = ss(self.input_list, [], [])
-            for self.s in inputready:
-                if self.s == self.server:
-                    self.on_accept()
-                    break
-                try:
-                    self.data = self.s.recv(self.buffer_size)
-                except:
-                    self.data=''
-                if len(self.data) == 0:
-                    self.on_close()
-                    break
-                else:
-                    self.on_recv()
-
-    def on_accept(self):
-        proxy=self.proxy.get_proxy()
-        forward = Forward().start(proxy[0], proxy[1])
-        clientsock, clientaddr = self.server.accept()
-        if forward:
-            print(clientaddr, "has connected")
-            self.input_list.append(clientsock)
-            self.input_list.append(forward)
-            self.channel[clientsock] = forward
-            self.channel[forward] = clientsock
-        else:
-            print("Can't establish connection with remote server.")
-            print("Closing connection with client side", clientaddr)
-            clientsock.close()
-
-    def on_close(self):
-        try:
-            print(self.s.getpeername(), "has disconnected")
-        except Exception as e:
-            pass
-        #remove objects from input_list
-        try:
-            self.input_list.remove(self.s)
-        except:
-            pass
-        try:
-            self.input_list.remove(self.channel[self.s])
-        except:
-            pass
-        try:
-            out = self.channel[self.s]
-        # close the connection with client
-            self.channel[out].close()  # equivalent to do self.s.close()
-        # close the connection with remote server
-            self.channel[self.s].close()
-        # delete both objects from channel dict
-        except: pass
-        try:
-            del self.channel[out]
-        except: pass
-        try:
-            del self.channel[self.s]
-        except:
-            pass
-
-    def on_recv(self):
-        data = self.data
-        # here we can parse and/or modify the data before send forward
-        # print(data)
-        host, port=self.get_orig_host(data)
-
-        if host and port:
-            use_proxy = False
-            # Check the proxy list
-            for domain in self.black_list:
-                if domain in host:
-                    # Continue to use forward proxy
-                    use_proxy=True
-                    break
-            if not use_proxy:
-                forward = Forward().start(host, port)
-                if forward:
-                    self.input_list.remove(self.channel[self.s])
-                    del self.channel[self.channel[self.s]]
-                    self.input_list.append(forward)
-                    self.channel[self.s]=forward
-                    self.channel[forward]=self.s
-        # print("Host: {} Port: {}".format(host,port))
-        try:
-            self.channel[self.s].send(data)
-        except socket.error:
-            self.on_close()
-        except KeyError:
-            self.input_list.remove(self.s)
-            self.s.close()
-
+        SocketServer.BaseRequestHandler.__init__(self, *args, **kwargs)
 
     def get_config(self):
         json = {}
@@ -144,7 +59,7 @@ class TheServer:
         return json
 
     def get_orig_host(self,input):
-        datas=str(input).split('\\r\\n')
+        datas = str(input).split('\r\n')
         for data in datas:
             if 'Host:' in data:
                 data_list=data.split(":")
@@ -153,3 +68,83 @@ class TheServer:
                 elif len(data_list)==3:
                     return data_list[1].strip(), int(data_list[2].strip())
         return None,None
+
+    def handle(self):
+        # print("Starting to handle connection...")
+
+        f = Forwarder(self, self.proxy.get_proxy())
+        f.start()
+        first_time = True
+        print("Received a connection from: {}:{}".format(self.client_address[0], self.client_address[1]))
+        try:
+            while True:
+                data = self.request.recv(4096)
+                if len(data) == 0:
+                    raise Exception("endpoint closed")
+                if first_time:
+                    if "Host" in data:
+                        host, port = self.get_orig_host(data)
+                        if host and port:
+                            # Change forwarder
+                            use_proxy = False
+                            for domain in self.black_list:
+                                if domain in host:
+                                    use_proxy = True
+                            if not use_proxy:
+                                print("Using DIRECT Connection for the request : {}:{}".format(host, port))
+                                f.stop_forwarding()
+                                f = Forwarder(self, [host, port])
+                                f.start()
+                    first_time = False
+                # print("Received from source: " + str(len(data)))
+                f.write_to_dest(data)
+        except Exception as e:
+            print("EXCEPTION reading from main socket")
+            print(e)
+
+        f.stop_forwarding()
+        print("Connection Closed :{}:{}".format(self.client_address[0], self.client_address[1]))
+
+    def write_to_source(self, data):
+        # print("Sending to source: " + str(len(data)))
+        self.request.send(data)
+
+    def stop_forwarding(self):
+        # print("...closing main socket")
+        self.request.close()
+
+
+class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+    def __init__(self, RequestHandlerClass):
+        SocketServer.TCPServer.__init__(self, server_address=("", self.get_config()['proxy_port']),
+                                        RequestHandlerClass=RequestHandlerClass)
+
+    def get_config(self):
+        json = {}
+        with open('config.yaml') as file:
+            json = yaml.load(file)
+        return json
+
+    pass
+
+
+if __name__ == "__main__":
+    HOST, PORT = "", 8080
+
+    server = ThreadedTCPServer((HOST, PORT), ThreadedTCPRequestHandler)
+    ip, port = server.server_address
+
+    # Start a thread with the server -- that thread will then start one
+    # more thread for each request
+    server_thread = threading.Thread(target=server.serve_forever)
+    # Exit the server thread when the main thread terminates
+    server_thread.daemon = True
+    server_thread.start()
+    print("Server loop running on port ", port)
+    try:
+        while True:
+            sleep(1)
+    except:
+        pass
+    print("...server stopping.")
+    server.shutdown()

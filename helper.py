@@ -34,11 +34,18 @@ class Helper(threading.Thread):
 
     def run(self):
         print("INFO : Started the Helper thread.")
+        secs = 0
+        print("INFO : Start the pre-run session.")
+        self.get_new_proxy()
         while not self.stop_job:
-            if not self.checker.validate_proxy(self.checker.get_proxy()):
-                print("INFO : Getting new proxy.")
-                self.get_new_proxy()
-            sleep(self.config.get('check_interval'))
+            if secs == self.config.get('check_interval'):
+                secs = 0
+                if not self.checker.validate_proxy(self.checker.get_proxy()):
+                    print("INFO : Getting new proxy.")
+                    self.get_new_proxy()
+            else:
+                sleep(1)
+                secs += 1
 
     def stop(self):
         self.stop_job=True

@@ -115,7 +115,14 @@ class TheServer:
                     self.channel[self.s]=forward
                     self.channel[forward]=self.s
         # print("Host: {} Port: {}".format(host,port))
-        self.channel[self.s].send(data)
+        try:
+            self.channel[self.s].send(data)
+        except socket.error:
+            self.on_close()
+        except KeyError:
+            self.input_list.remove(self.s)
+            self.s.close()
+
 
     def get_config(self):
         json = {}

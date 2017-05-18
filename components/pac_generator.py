@@ -35,5 +35,5 @@ class PacGenerator(object):
         self.file_writer(template.render(info=info))
 
     def file_writer(self,data):
-        with open("pac/proxy.pac",'w') as file:
+        with open("pac/proxy.pac",'w+') as file:
             file.write(data)

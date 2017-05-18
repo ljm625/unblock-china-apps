@@ -14,12 +14,12 @@ class PacGenerator(object):
 
 
     def get_ip(self):
-        resp=requests.get("http://icanhazip.com/",timeout=2)
+        resp=requests.get("https://api.ipify.org?format=json",timeout=2)
         try:
             if resp.status_code>300:
                 return "127.0.0.1"
             else:
-                return str(resp.text).strip()
+                return resp.json()['ip'].strip()
         except:
             return "127.0.0.1"
 

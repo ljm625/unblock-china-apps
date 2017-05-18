@@ -1,6 +1,8 @@
 # This file is used to pick correct proxy and save to localhost.
 from time import sleep
 import threading
+
+import logging
 import yaml
 
 from components.proxy_checker import ProxyChecker
@@ -33,19 +35,22 @@ class Helper(threading.Thread):
             proxy = self.checker.get_proxy(refresh=True)
 
     def run(self):
-        print("INFO : Started the Helper thread.")
+        logging.info("Started the Helper thread.")
         secs = 0
-        print("INFO : Start the pre-run session.")
+        logging.info("Start the pre-run session.")
         self.get_new_proxy()
         while not self.stop_job:
-            if secs == self.config.get('check_interval'):
+            if secs >= self.config.get('check_interval'):
                 secs = 0
                 if not self.checker.validate_proxy(self.checker.get_proxy()):
-                    print("INFO : Getting new proxy.")
+                    logging.info("Getting new proxy.")
                     self.get_new_proxy()
+            elif self.stop_job:
+                logging.info("Stopping the helper thread.")
+                break
             else:
-                sleep(1)
-                secs += 1
+                sleep(3)
+                secs += 3
 
     def stop(self):
         self.stop_job=True

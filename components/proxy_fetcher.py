@@ -1,3 +1,4 @@
+import logging
 import requests
 import yaml
 from bs4 import BeautifulSoup
@@ -43,7 +44,7 @@ class ProxyFetcher(object):
             try:
                 self.proxys.append([proxy_list[i].select("td:nth-of-type(1)")[0].text.strip(),proxy_list[i].select("td:nth-of-type(2)")[0].text.strip()])
             except Exception as e:
-                print("ERROR: {}".format(e))
+                logging.error("{}".format(e))
 
     def get_proxy_list(self,refresh=False):
         if self.proxys and not refresh:

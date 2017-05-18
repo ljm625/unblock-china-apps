@@ -3,52 +3,57 @@ import SocketServer
 import threading
 from time import sleep
 
+import logging
 import yaml
 
 from components.proxy_checker import ProxyChecker
 
 
 class Forwarder(threading.Thread):
-    def __init__(self, source, dest):
+    def __init__(self, source, dest, buffer_size):
         threading.Thread.__init__(self)
         self.source = source
         self.dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.dest.connect((dest[0], int(dest[1])))
-        print("Connect to Forwarder:{}:{}".format(dest[0], dest[1]))
+        if buffer_size:
+            self.buffer_size = buffer_size
+        else:
+            self.buffer_size = 4096
+        logging.info("Connect to Forwarder:{}:{}".format(dest[0], dest[1]))
 
     def run(self):
-        # print("starting forwarder... ")
+        # logging.info("starting forwarder... ")
 
         try:
             while True:
-                data = self.dest.recv(4096)
+                data = self.dest.recv(self.buffer_size)
                 if len(data) == 0:
                     raise Exception("endpoint closed")
-                # print("Received from dest: " + str(len(data)))
+                # logging.info("Received from dest: " + str(len(data)))
                 self.source.write_to_source(data)
         except Exception as e:
-            print("EXCEPTION reading from forwarding socket")
-            print(e)
+            logging.warning("Exception reading from forwarding socket : {}".format(e))
 
         self.source.stop_forwarding()
-        # print("...ending forwarder.")
+        # logging.info("...ending forwarder.")
 
     def write_to_dest(self, data):
-        # print("Sending to dest: " + str(len(data)))
+        # logging.info("Sending to dest: " + str(len(data)))
         self.dest.send(data)
 
     def stop_forwarding(self):
-        # print("...closing forwarding socket")
+        # logging.info("...closing forwarding socket")
         self.dest.close()
 
 
 class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
     def __init__(self, *args, **kwargs):
         self.proxy = ProxyChecker.get_instance()
-        self.black_list = self.get_config()['proxy_domain']
+        self.config = self.get_config()
+        self.black_list = self.config['proxy_domain']
         while not self.proxy:
             sleep(5)
-            print("INFO : Waiting for proxy list to be generated...")
+            logging.info("INFO : Waiting for proxy list to be generated...")
             self.proxy = ProxyChecker.get_instance()
         SocketServer.BaseRequestHandler.__init__(self, *args, **kwargs)
 
@@ -70,12 +75,12 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
         return None,None
 
     def handle(self):
-        # print("Starting to handle connection...")
+        # logging.info("Starting to handle connection...")
 
-        f = Forwarder(self, self.proxy.get_proxy())
+        f = Forwarder(self, self.proxy.get_proxy(), self.config.get('buffer_size'))
         f.start()
         first_time = True
-        print("Received a connection from: {}:{}".format(self.client_address[0], self.client_address[1]))
+        logging.info("Received a connection from: {}:{}".format(self.client_address[0], self.client_address[1]))
         try:
             while True:
                 data = self.request.recv(4096)
@@ -91,26 +96,25 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
                                 if domain in host:
                                     use_proxy = True
                             if not use_proxy:
-                                print("Using DIRECT Connection for the request : {}:{}".format(host, port))
+                                logging.info("Using DIRECT Connection for the request : {}:{}".format(host, port))
                                 f.stop_forwarding()
-                                f = Forwarder(self, [host, port])
+                                f = Forwarder(self, [host, port], self.config.get('buffer_size'))
                                 f.start()
                     first_time = False
-                # print("Received from source: " + str(len(data)))
+                # logging.info("Received from source: " + str(len(data)))
                 f.write_to_dest(data)
         except Exception as e:
-            print("EXCEPTION reading from main socket")
-            print(e)
+            logging.warning("Exception reading from forwarding socket : {}".format(e))
 
         f.stop_forwarding()
-        print("Connection Closed :{}:{}".format(self.client_address[0], self.client_address[1]))
+        logging.info("Connection Closed :{}:{}".format(self.client_address[0], self.client_address[1]))
 
     def write_to_source(self, data):
-        # print("Sending to source: " + str(len(data)))
+        # logging.info("Sending to source: " + str(len(data)))
         self.request.send(data)
 
     def stop_forwarding(self):
-        # print("...closing main socket")
+        # logging.info("...closing main socket")
         self.request.close()
 
 

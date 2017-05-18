@@ -4,13 +4,14 @@ proxy_domain:
   - music.163.com
   - music.126.net
   - netease.com
+
 candidate_num: 10
 validate_url: "http://ipservice.163.com/isFromMainland"
 timeout: 2
 check_interval: 30
 # Socket params
-buffer_size: 4096
-delay: 0.001
+buffer_size: 2048
 
+# Proxy params
 proxy_port: 9090
-# proxy_ip:  ## This field overrides the get_ip feature..
+# proxy_ip: "127.0.0.1" ## This field overrides the get_ip feature.

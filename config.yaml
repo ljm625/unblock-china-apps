@@ -1,14 +1,16 @@
 proxy_url: "http://cn-proxy.com"
 proxy_domain:
   - 126.com
-  - 163.com
+  - music.163.com
+  - music.126.net
+  - netease.com
 candidate_num: 10
 validate_url: "http://ipservice.163.com/isFromMainland"
 timeout: 2
-check_interval: 60
+check_interval: 30
 # Socket params
 buffer_size: 4096
-delay: 0.0001
+delay: 0.001
 
 proxy_port: 9090
 # proxy_ip:  ## This field overrides the get_ip feature..

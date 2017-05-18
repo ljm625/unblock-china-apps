@@ -8,6 +8,7 @@ from components.proxy_fetcher import ProxyFetcher
 
 
 class Helper(threading.Thread):
+    stop_job = False
 
     def __init__(self,threadID,name,config_file='config.yaml'):
         threading.Thread.__init__(self,name=name)
@@ -33,8 +34,11 @@ class Helper(threading.Thread):
 
     def run(self):
         print("INFO : Started the Helper thread.")
-        while 1:
+        while not self.stop_job:
             if not self.checker.validate_proxy(self.checker.get_proxy()):
                 print("INFO : Getting new proxy.")
                 self.get_new_proxy()
             sleep(self.config.get('check_interval'))
+
+    def stop(self):
+        self.stop_job=True

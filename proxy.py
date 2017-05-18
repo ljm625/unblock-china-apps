@@ -124,27 +124,3 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
         with open('config.yaml') as file:
             json = yaml.load(file)
         return json
-
-    pass
-
-
-if __name__ == "__main__":
-    HOST, PORT = "", 8080
-
-    server = ThreadedTCPServer((HOST, PORT), ThreadedTCPRequestHandler)
-    ip, port = server.server_address
-
-    # Start a thread with the server -- that thread will then start one
-    # more thread for each request
-    server_thread = threading.Thread(target=server.serve_forever)
-    # Exit the server thread when the main thread terminates
-    server_thread.daemon = True
-    server_thread.start()
-    print("Server loop running on port ", port)
-    try:
-        while True:
-            sleep(1)
-    except:
-        pass
-    print("...server stopping.")
-    server.shutdown()

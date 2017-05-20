@@ -52,6 +52,7 @@ class Forwarder(threading.Thread):
         return self.alive
 
 class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
+    alive = True
     def __init__(self, *args, **kwargs):
         self.proxy = ProxyChecker.get_instance()
         self.config = self.get_config()
@@ -110,11 +111,17 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
                     # logging.info("Received from source: " + str(len(data)))
                     f.write_to_dest(data)
                 else:
-                    raise Exception("Forwarder is dead.")
+                    raise LookupError("Forwarder is dead.")
+        except LookupError as e:
+            logging.warning("Exception reading from forwarding socket : {}".format(e))
+            if self.alive:
+                self.stop_forwarding()
         except Exception as e:
             logging.warning("Exception reading from forwarding socket : {}".format(e))
+            self.alive = False
+        if f.check_alive():
+            f.stop_forwarding()
 
-        f.stop_forwarding()
         logging.info("Connection Closed :{}:{}".format(self.client_address[0], self.client_address[1]))
 
     def write_to_source(self, data):

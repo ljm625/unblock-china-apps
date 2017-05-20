@@ -10,6 +10,7 @@ from components.proxy_checker import ProxyChecker
 
 
 class Forwarder(threading.Thread):
+    alive = True
     def __init__(self, source, dest, buffer_size):
         threading.Thread.__init__(self)
         self.source = source
@@ -32,6 +33,7 @@ class Forwarder(threading.Thread):
                 # logging.info("Received from dest: " + str(len(data)))
                 self.source.write_to_source(data)
         except Exception as e:
+            self.alive = False
             logging.warning("Exception reading from forwarding socket : {}".format(e))
 
         self.source.stop_forwarding()
@@ -43,8 +45,11 @@ class Forwarder(threading.Thread):
 
     def stop_forwarding(self):
         # logging.info("...closing forwarding socket")
+        self.alive = False
         self.dest.close()
 
+    def check_alive(self):
+        return self.alive
 
 class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -83,26 +88,29 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
         logging.info("Received a connection from: {}:{}".format(self.client_address[0], self.client_address[1]))
         try:
             while True:
-                data = self.request.recv(4096)
-                if len(data) == 0:
-                    raise Exception("endpoint closed")
-                if first_time:
-                    if "Host" in data:
-                        host, port = self.get_orig_host(data)
-                        if host and port:
-                            # Change forwarder
-                            use_proxy = False
-                            for domain in self.black_list:
-                                if domain in host:
-                                    use_proxy = True
-                            if not use_proxy:
-                                logging.info("Using DIRECT Connection for the request : {}:{}".format(host, port))
-                                f.stop_forwarding()
-                                f = Forwarder(self, [host, port], self.config.get('buffer_size'))
-                                f.start()
-                    first_time = False
-                # logging.info("Received from source: " + str(len(data)))
-                f.write_to_dest(data)
+                if f.check_alive():
+                    data = self.request.recv(4096)
+                    if len(data) == 0:
+                        raise Exception("endpoint closed")
+                    if first_time:
+                        if "Host" in data:
+                            host, port = self.get_orig_host(data)
+                            if host and port:
+                                # Change forwarder
+                                use_proxy = False
+                                for domain in self.black_list:
+                                    if domain in host:
+                                        use_proxy = True
+                                if not use_proxy:
+                                    logging.info("Using DIRECT Connection for the request : {}:{}".format(host, port))
+                                    f.stop_forwarding()
+                                    f = Forwarder(self, [host, port], self.config.get('buffer_size'))
+                                    f.start()
+                        first_time = False
+                    # logging.info("Received from source: " + str(len(data)))
+                    f.write_to_dest(data)
+                else:
+                    raise Exception("Forwarder is dead.")
         except Exception as e:
             logging.warning("Exception reading from forwarding socket : {}".format(e))
 

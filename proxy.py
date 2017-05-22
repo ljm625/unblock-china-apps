@@ -11,11 +11,13 @@ from components.proxy_checker import ProxyChecker
 
 class Forwarder(threading.Thread):
     alive = True
-    def __init__(self, source, dest, buffer_size):
+
+    def __init__(self, source, dest, buffer_size, delay_time):
         threading.Thread.__init__(self)
         self.source = source
         self.dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.dest.connect((dest[0], int(dest[1])))
+        self.delay_time = delay_time
         if buffer_size:
             self.buffer_size = buffer_size
         else:
@@ -27,11 +29,19 @@ class Forwarder(threading.Thread):
 
         try:
             while True:
-                data = self.dest.recv(self.buffer_size)
-                if len(data) == 0:
-                    raise Exception("endpoint closed")
-                # logging.info("Received from dest: " + str(len(data)))
-                self.source.write_to_source(data)
+                if self.source.check_alive():
+                    sleep(self.delay_time)
+                    data = self.dest.recv(self.buffer_size)
+                    if len(data) == 0:
+                        raise Exception("endpoint closed")
+                    # logging.info("Received from dest: " + str(len(data)))
+                    self.source.write_to_source(data)
+                else:
+                    raise LookupError("Source is dead.")
+        except LookupError as e:
+            logging.warning("Exception reading from source socket : {}".format(e))
+            if self.alive:
+                self.stop_forwarding()
         except Exception as e:
             self.alive = False
             logging.warning("Exception reading from forwarding socket : {}".format(e))
@@ -45,8 +55,9 @@ class Forwarder(threading.Thread):
 
     def stop_forwarding(self):
         # logging.info("...closing forwarding socket")
-        self.alive = False
-        self.dest.close()
+        if self.alive:
+            self.alive = False
+            self.dest.close()
 
     def check_alive(self):
         return self.alive
@@ -57,6 +68,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
         self.proxy = ProxyChecker.get_instance()
         self.config = self.get_config()
         self.black_list = self.config['proxy_domain']
+        self.delay_time = self.config['delay_time']
         while not self.proxy:
             sleep(5)
             logging.info("INFO : Waiting for proxy list to be generated...")
@@ -83,13 +95,14 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         # logging.info("Starting to handle connection...")
 
-        f = Forwarder(self, self.proxy.get_proxy(), self.config.get('buffer_size'))
+        f = Forwarder(self, self.proxy.get_proxy(), self.config.get('buffer_size'), self.delay_time)
         f.start()
         first_time = True
         logging.info("Received a connection from: {}:{}".format(self.client_address[0], self.client_address[1]))
         try:
             while True:
                 if f.check_alive():
+                    sleep(self.delay_time)
                     data = self.request.recv(4096)
                     if len(data) == 0:
                         raise Exception("endpoint closed")
@@ -105,7 +118,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
                                 if not use_proxy:
                                     logging.info("Using DIRECT Connection for the request : {}:{}".format(host, port))
                                     f.stop_forwarding()
-                                    f = Forwarder(self, [host, port], self.config.get('buffer_size'))
+                                    f = Forwarder(self, [host, port], self.config.get('buffer_size'), self.delay_time)
                                     f.start()
                         first_time = False
                     # logging.info("Received from source: " + str(len(data)))
@@ -124,13 +137,18 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
 
         logging.info("Connection Closed :{}:{}".format(self.client_address[0], self.client_address[1]))
 
+    def check_alive(self):
+        return self.alive
+
     def write_to_source(self, data):
         # logging.info("Sending to source: " + str(len(data)))
         self.request.send(data)
 
     def stop_forwarding(self):
         # logging.info("...closing main socket")
-        self.request.close()
+        if self.alive:
+            self.alive = False
+            self.request.close()
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):

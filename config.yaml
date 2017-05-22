@@ -10,7 +10,8 @@ validate_url: "http://ipservice.163.com/isFromMainland"
 timeout: 2
 check_interval: 30
 # Socket params
-buffer_size: 2048
+buffer_size: 4096
+delay_time: 0.001
 
 # Proxy params
 proxy_port: 9090

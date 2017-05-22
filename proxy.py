@@ -43,9 +43,7 @@ class Forwarder(threading.Thread):
             if self.alive:
                 self.stop_forwarding()
         except Exception as e:
-            self.alive = False
             logging.warning("Exception reading from forwarding socket : {}".format(e))
-
         self.source.stop_forwarding()
         # logging.info("...ending forwarder.")
 
@@ -131,7 +129,6 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
                 self.stop_forwarding()
         except Exception as e:
             logging.warning("Exception reading from forwarding socket : {}".format(e))
-            self.alive = False
         if f.check_alive():
             f.stop_forwarding()
 

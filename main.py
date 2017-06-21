@@ -5,7 +5,7 @@ from time import sleep
 
 from components.pac_generator import PacGenerator
 from helper import Helper
-from proxy import ThreadedTCPServer, ThreadedTCPRequestHandler
+from proxy import ForkedTCPServer, ThreadedTCPRequestHandler
 from proxy_deprecated import TheServer
 import logging
 
@@ -15,7 +15,7 @@ if __name__ == '__main__':
     helper = Helper(1, "Thread-1")
     helper.start()
 
-    server = ThreadedTCPServer(ThreadedTCPRequestHandler)
+    server = ForkedTCPServer(ThreadedTCPRequestHandler)
     ip, port = server.server_address
 
     # Start a thread with the server -- that thread will then start one

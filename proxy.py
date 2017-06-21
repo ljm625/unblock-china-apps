@@ -148,10 +148,10 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
             self.request.close()
 
 
-class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+class ForkedTCPServer(SocketServer.ForkingMixIn, SocketServer.ForkingTCPServer):
     def __init__(self, RequestHandlerClass):
-        SocketServer.TCPServer.__init__(self, server_address=("", self.get_config()['proxy_port']),
-                                        RequestHandlerClass=RequestHandlerClass)
+        SocketServer.ForkingTCPServer.__init__(self, server_address=("", self.get_config()['proxy_port']),
+                                               RequestHandlerClass=RequestHandlerClass)
 
     def get_config(self):
         json = {}

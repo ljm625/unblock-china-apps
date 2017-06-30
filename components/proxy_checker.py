@@ -35,7 +35,7 @@ class ProxyChecker(object):
             return {"http": "http://{}:{}".format(proxy[0],proxy[1]) }
         try:
             resp=requests.get(self.check_url,proxies=build_proxy(),timeout=self.timeout)
-            if resp.status_code<300 and resp.text=='true':
+            if resp.status_code < 300:
                 # TODO : The netease validate link always return false whether it's mainland or not
                 return resp.elapsed.total_seconds()*1000
             return None

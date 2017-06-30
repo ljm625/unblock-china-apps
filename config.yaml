@@ -5,9 +5,9 @@ proxy_domain:
   - music.126.net
   - netease.com
 
-candidate_num: 10
-validate_url: "http://ipservice.163.com/isFromMainland"
-timeout: 2
+candidate_num: 20
+validate_url: "https://cn.aliyun.com/"
+timeout: 10
 check_interval: 30
 # Socket params
 buffer_size: 4096

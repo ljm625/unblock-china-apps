@@ -71,6 +71,9 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
             sleep(5)
             logging.info("INFO : Waiting for proxy list to be generated...")
             self.proxy = ProxyChecker.get_instance()
+        while not self.proxy.best_proxy:
+            sleep(5)
+            logging.info("INFO : Waiting for best proxy to be find...")
         SocketServer.BaseRequestHandler.__init__(self, *args, **kwargs)
 
     def get_config(self):

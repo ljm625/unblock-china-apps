@@ -6,7 +6,7 @@ proxy_domain:
   - netease.com
 
 candidate_num: 20
-validate_url: "https://cn.aliyun.com/"
+validate_url: "http://cdn.bootcss.com/angular.js/2.0.0-beta.17/angular2-all.umd.js"
 timeout: 10
 check_interval: 30
 # Socket params

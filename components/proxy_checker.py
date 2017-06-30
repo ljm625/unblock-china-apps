@@ -1,3 +1,4 @@
+import logging
 import requests
 import yaml
 
@@ -58,6 +59,8 @@ class ProxyChecker(object):
         if not best:
             raise AttributeError("ERROR : No available servers! ")
         self.best_proxy=best
+        logging.info("Best Proxy: {}:{}".format(self.best_proxy[0], self.best_proxy[1]))
+
 
     def get_proxy(self,refresh=False):
         if self.best_proxy and not refresh:

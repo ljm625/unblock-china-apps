@@ -30,7 +30,7 @@ class Forwarder(threading.Thread):
         try:
             while True:
                 if self.source.check_alive():
-                    sleep(self.delay_time)
+                    # sleep(self.delay_time)
                     data = self.dest.recv(self.buffer_size)
                     if len(data) == 0:
                         raise Exception("endpoint closed")
@@ -100,7 +100,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
         try:
             while True:
                 if f.check_alive():
-                    sleep(self.delay_time)
+                    # sleep(self.delay_time)
                     data = self.request.recv(4096)
                     if len(data) == 0:
                         raise Exception("endpoint closed")

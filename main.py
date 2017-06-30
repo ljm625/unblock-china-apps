@@ -4,6 +4,7 @@ import threading
 from time import sleep
 
 from components.pac_generator import PacGenerator
+from components.proxy_checker import ProxyChecker
 from helper import Helper
 from proxy import ForkedTCPServer, ThreadedTCPRequestHandler
 from proxy_deprecated import TheServer
@@ -25,6 +26,15 @@ if __name__ == '__main__':
     server_thread.daemon = True
     logging.info("Sleep a little bit for the proxy to complete..")
     sleep(10)
+    test_proxy = ProxyChecker.get_instance()
+    while not test_proxy:
+        sleep(5)
+        logging.info("INFO : Waiting for proxy list to be generated...")
+        test_proxy = ProxyChecker.get_instance()
+    while not test_proxy.best_proxy:
+        sleep(5)
+        logging.info("INFO : Waiting for best proxy to be find...")
+
     server_thread.start()
     logging.info("Server Running at {}".format(port))
     try:

@@ -6,9 +6,10 @@ proxy_domain:
   - netease.com
 
 candidate_num: 20
-validate_url: "http://cdn.bootcss.com/angular.js/2.0.0-beta.17/angular2-all.umd.js"
+validate_url: "http://ipservice.163.com/isFromMainland"
 timeout: 10
-check_interval: 600
+checker_timeout: 25
+check_interval: 60
 # Socket params
 buffer_size: 4096
 delay_time: 0.001

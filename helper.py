@@ -42,7 +42,7 @@ class Helper(threading.Thread):
         while not self.stop_job:
             if secs >= self.config.get('check_interval'):
                 secs = 0
-                if not self.checker.validate_proxy(self.checker.get_proxy()):
+                if not self.checker.validate_proxy(self.checker.get_proxy(),check=True):
                     logging.info("Getting new proxy.")
                     self.get_new_proxy()
             elif self.stop_job:

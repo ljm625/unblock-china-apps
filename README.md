@@ -7,7 +7,7 @@
 ## How to use ?
 
 只需要找到一个服务器/本机 运行以下命令即可 （需要提前装好docker）
-docker run -p 9000:9000 -p 9090:9090 -m 256m -d ljm625/unblock-netease
+docker run -p 9000:9000 -p 9090:9090 -d ljm625/unblock-netease
 
 然后设置你的设备pac为 http://你的ip:9000/proxy.pac
 

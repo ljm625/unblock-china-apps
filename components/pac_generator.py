@@ -3,7 +3,6 @@ import yaml
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
 import os
-import socket
 
 class PacGenerator(object):
     def __init__(self,config):
@@ -16,11 +15,11 @@ class PacGenerator(object):
 
     def get_ip(self):
         try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.connect(("8.8.8.8", 80))
-            ip = s.getsockname()[0]
-            s.close()
-            return ip
+            resp = requests.get("https://api.ipify.org?format=json", timeout=2)
+            if resp.status_code>300:
+                return "127.0.0.1"
+            else:
+                return resp.json()['ip'].strip()
         except:
             return "127.0.0.1"
 

@@ -6,14 +6,18 @@
 
 ## How to use ?
 
-只需要找到一个服务器/本机 运行以下命令即可 （需要提前装好docker）
+只需要找到一个服务器/本机 运行以下命令即可 （需要提前装好docker）*强烈建议部署到VPS，所有设备均可使用*
 
+```dockerfile
 docker run -p 9000:9000 -p 9090:9090 -d ljm625/unblock-netease
+```
+如果因为某些原因导致ip获取错误，（比如**本机没有公网ip**），则请手动指定ip（本机ip即可，大多数情况下127.0.0.1 works fine）
 
-如果因为某些原因导致ip获取错误，则请手动指定ip
+运行：
+```dockerfile
 
 docker run -p 9000:9000 -p 9090:9090 **-e "IPADDR=127.0.0.1"** -d ljm625/unblock-netease
-
+```
 
 然后设置你的设备pac为 http://你的ip:9000/proxy.pac
 
@@ -31,7 +35,7 @@ Or 将你的网易云设置**http代理**为 你的ip:9090
 
 所有的设置都在config.yaml文件中
 
-```
+```yaml
 proxy_url: 采集代理的proxy网站
 proxy_domain:
   - 代理的http请求域名列表

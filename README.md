@@ -7,13 +7,18 @@
 ## How to use ?
 
 只需要找到一个服务器/本机 运行以下命令即可 （需要提前装好docker）
+
 docker run -p 9000:9000 -p 9090:9090 -d ljm625/unblock-netease
+
+如果因为某些原因导致ip获取错误，则请手动指定ip
+
+docker run -p 9000:9000 -p 9090:9090 **-e "IPADDR=127.0.0.1"** -d ljm625/unblock-netease
+
 
 然后设置你的设备pac为 http://你的ip:9000/proxy.pac
 
 Or 将你的网易云设置**http代理**为 你的ip:9090
 
-如果你是在一台没有公网地址的机器运行（比如本机），请修改配置文件，将ip取消注释并设置为127.0.0.1 OR **不使用PAC文件**
 
 ## How it works?
 程序主要使用爬虫抓取http代理公布网站，并且对抓取结果进行**测试**，选出最佳的代理，并建立反向代理。
@@ -42,7 +47,6 @@ delay_time: 0.001
 
 # Proxy params
 proxy_port: 代理端口设置
-# proxy_ip: "127.0.0.1" ## 这个项默认是屏蔽的，如果你取消这行的注释，会在pac文件中强制使用你定义的ip（用于某些没有公网ip的机器，如本机）
 
 ```
 
@@ -54,6 +58,8 @@ proxy_port: 代理端口设置
 - 目前对各个代理网站规则内置，拟实现一个模版系统，存储不同代理网站的抓取规则
 
 ## Update History
+
+Update 2017/11/02 : 更新了获取内网IP的方法，并将设定固定ip配置到了环境变量中
 
 Update 2017/11/01 : Update Wiki details
 

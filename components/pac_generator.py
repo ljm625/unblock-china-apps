@@ -2,7 +2,8 @@ import requests
 import yaml
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
-
+import os
+import socket
 
 class PacGenerator(object):
     def __init__(self,config):
@@ -15,20 +16,20 @@ class PacGenerator(object):
 
     def get_ip(self):
         try:
-            resp = requests.get("https://api.ipify.org?format=json", timeout=2)
-            if resp.status_code>300:
-                return "127.0.0.1"
-            else:
-                return resp.json()['ip'].strip()
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
+            s.close()
+            return ip
         except:
             return "127.0.0.1"
 
     def build_pac(self):
         info={}
         info['proxy_domain']=self.config['proxy_domain']
-        if self.config.get("proxy_ip"):
-            info['proxy_ip']=self.config.get("proxy_ip")
-        else:
+        try:
+            info['proxy_ip']=os.environ["IPADDR"]
+        except:
             info['proxy_ip']=self.get_ip()
         info['proxy_port']=self.config.get("proxy_port")
         template = self.env.get_template("proxy.pac")

@@ -156,6 +156,11 @@ class ForkedTCPServer(SocketServer.ForkingMixIn, SocketServer.ForkingTCPServer):
         SocketServer.ForkingTCPServer.__init__(self, server_address=("", self.get_config()['proxy_port']),
                                                RequestHandlerClass=RequestHandlerClass)
 
+    class ForkedTCPServer(SocketServer.ForkingMixIn, SocketServer.ForkingTCPServer):
+        def __init__(self, RequestHandlerClass):
+            SocketServer.ForkingTCPServer.__init__(self, server_address=("", self.get_config()['proxy_port']),
+                                                   RequestHandlerClass=RequestHandlerClass)
+
     def get_config(self):
         json = {}
         with open('config.yaml') as file:

@@ -1,4 +1,8 @@
-proxy_url: "http://cn-proxy.com"
+proxy_urls: 
+  - name: cnproxy
+    url: "http://cn-proxy.com/"
+  - name: proxynova
+    url: "https://www.proxynova.com/proxy-server-list/country-cn/"
 proxy_domain:
   - 126.com
   - music.163.com

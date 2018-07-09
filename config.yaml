@@ -8,6 +8,7 @@ proxy_domain:
   - music.163.com
   - music.126.net
   - netease.com
+  - akamaiedge.net
 
 candidate_num: 20
 validate_url: "http://ipservice.163.com/isFromMainland"

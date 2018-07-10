@@ -14,7 +14,7 @@ candidate_num: 20
 validate_url: "http://ipservice.163.com/isFromMainland"
 timeout: 10
 checker_timeout: 5
-check_interval: 60
+check_interval: 30
 # Socket params
 buffer_size: 4096
 delay_time: 0.001

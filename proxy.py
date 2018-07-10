@@ -16,13 +16,19 @@ class Forwarder(threading.Thread):
         threading.Thread.__init__(self)
         self.source = source
         self.dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.dest.connect((dest[0], int(dest[1])))
-        self.delay_time = delay_time
-        if buffer_size:
-            self.buffer_size = buffer_size
-        else:
-            self.buffer_size = 4096
-        logging.info("Connect to Forwarder:{}:{}".format(dest[0], dest[1]))
+        try:
+            self.dest.connect((dest[0], int(dest[1])))
+            self.delay_time = delay_time
+            if buffer_size:
+                self.buffer_size = buffer_size
+            else:
+                self.buffer_size = 4096
+            logging.info("Connect to Forwarder:{}:{}".format(dest[0], dest[1]))
+        except Exception,e:
+            self.source.stop_forwarding()
+            logging.error("Connect to Forwarder Failed! :{}:{}".format(dest[0], dest[1]))
+
+            raise Exception
 
     def run(self):
         # logging.info("starting forwarder... ")

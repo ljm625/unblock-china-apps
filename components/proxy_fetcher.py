@@ -37,18 +37,21 @@ class ProxyFetcher(object):
             raise Exception("ERROR : The Proxy Website is DOWN.")
 
     def proxy_parser(self):
-        self.proxys=[]
-        for server in self.urls:
-            data=self.proxy_fetcher(server['url'])
-            soup = BeautifulSoup(data,"html5lib")
-            proxy_list=soup.select("tbody tr")
-            for i in range(0,self.candidate):
-                try:
-                    self.proxys.append(get_data_on_profile(server['name'],proxy_list[i]))
-                except Exception as e:
-                    logging.error("{}".format(e))
-        print("Got Proxies:")
-        print(self.proxys)
+        try:
+            self.proxys=[]
+            for server in self.urls:
+                data=self.proxy_fetcher(server['url'])
+                soup = BeautifulSoup(data,"html5lib")
+                proxy_list=soup.select("tbody tr")
+                for i in range(0,self.candidate):
+                    try:
+                        self.proxys.append(get_data_on_profile(server['name'],proxy_list[i]))
+                    except Exception as e:
+                        logging.error("{}".format(e))
+            print("Got Proxies:")
+            print(self.proxys)
+        except Exception as e:
+            logging.error("{}".format(e))
 
     def get_proxy_list(self,refresh=False):
         if self.proxys and not refresh:

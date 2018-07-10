@@ -28,6 +28,8 @@ class Helper(threading.Thread):
 
     def get_new_proxy(self):
         try:
+            list = self.fetcher.get_proxy_list(refresh=True)
+            self.checker.update_list(list)
             proxy=self.checker.get_proxy(refresh=True)
         except AttributeError as e:
             list = self.fetcher.get_proxy_list(refresh=True)

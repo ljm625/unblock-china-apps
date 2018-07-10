@@ -6,11 +6,12 @@ import yaml
 class ProxyChecker(object):
     best_proxy=None
     instance=None
-    def __init__(self,proxy_list,check_url,timeout=10,checker_timeout=20):
+    def __init__(self,proxy_list,check_url,speedtest_url,timeout=10,checker_timeout=20):
         self.proxy_list=proxy_list
         self.check_url=check_url
         self.timeout=timeout
         self.checker_timeout=checker_timeout
+        self.speedtest_url=speedtest_url
 
     @classmethod
     def get_instance(cls,proxy_list=None):
@@ -25,10 +26,11 @@ class ProxyChecker(object):
         else:
             config=yaml_loader('config.yaml')
             check_url=config.get('validate_url')
+            speedtest_url=config.get('speedtest_url')
             timeout=config.get('timeout')
             checker_timeout=config.get('checker_timeout')
             if check_url and timeout:
-                cls.instance=cls(proxy_list=proxy_list,check_url=check_url,timeout=timeout,checker_timeout=checker_timeout)
+                cls.instance=cls(proxy_list=proxy_list,check_url=check_url,speedtest_url=speedtest_url,timeout=timeout,checker_timeout=checker_timeout)
                 return cls.instance
             else:
                 raise Exception("ERROR : The Config URL is missing")
@@ -42,8 +44,11 @@ class ProxyChecker(object):
             else:
                 resp=requests.get(self.check_url,proxies=build_proxy(),timeout=self.timeout)
             if resp.status_code < 300 and resp.text=='true':
+                resp_speed = requests.get(self.speedtest_url,proxies=build_proxy(),timeout=self.timeout)
+                if resp_speed.status_code> 300:
+                    raise Exception("Error:Server Speed too slow.")
                 # TODO : The netease validate link always return false whether it's mainland or not
-                return resp.elapsed.total_seconds()*1000
+                return resp_speed.elapsed.total_seconds()*1000
             return None
         except Exception as e:
             return None

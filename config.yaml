@@ -12,6 +12,7 @@ proxy_domain:
 
 candidate_num: 20
 validate_url: "http://ipservice.163.com/isFromMainland"
+speedtest_url : "http://www.163.com/"
 timeout: 10
 checker_timeout: 5
 check_interval: 30

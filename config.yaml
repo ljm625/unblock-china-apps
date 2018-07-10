@@ -13,7 +13,7 @@ proxy_domain:
 candidate_num: 20
 validate_url: "http://ipservice.163.com/isFromMainland"
 timeout: 10
-checker_timeout: 25
+checker_timeout: 5
 check_interval: 60
 # Socket params
 buffer_size: 4096

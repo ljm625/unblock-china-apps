@@ -8,6 +8,30 @@
 
 只需要找到一个服务器/本机 运行以下命令即可 （需要提前装好docker）*强烈建议部署到VPS，所有设备均可使用*
 
+**更新**
+
+支持dns 工作模式
+
+
+运行
+```dockerfile
+docker run -p 80:9090 -p 53:53 -p 53:53/udp -p 9000:9000 -p 9090:9090 -d ljm625/unblock-netease
+```
+
+如果因为某些原因导致ip获取错误，（比如**本机没有公网ip**），则请手动指定ip（本机ip即可，大多数情况下127.0.0.1 works fine）
+
+运行：
+```dockerfile
+
+docker run -p 80:9090 -p 53:53 -p 53:53/udp -p 9000:9000 -p 9090:9090 **-e "IPADDR=127.0.0.1"** -d ljm625/unblock-netease
+```
+
+之后将设备的dns服务器改为服务器IP或者本机（127.0.0.1），打开网易云稍等片刻，即可享受国区网易云！
+
+
+**旧版PAC工作模式**
+
+
 ```dockerfile
 docker run -p 9000:9000 -p 9090:9090 -d ljm625/unblock-netease
 ```
@@ -22,6 +46,9 @@ docker run -p 9000:9000 -p 9090:9090 **-e "IPADDR=127.0.0.1"** -d ljm625/unblock
 然后设置你的设备pac为 http://你的ip:9000/proxy.pac
 
 Or 将你的网易云设置**http代理**为 你的ip:9090
+
+
+**此外，还可配合proxifier使用，这样可以不使用DNS以及PAC**
 
 
 ## How it works?

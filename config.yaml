@@ -23,3 +23,7 @@ delay_time: 0.001
 
 # Proxy params
 proxy_port: 9090
+
+dns_enabled : true
+dns_port : 53
+upstream_dns : "8.8.8.8"

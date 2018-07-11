@@ -3,3 +3,4 @@ requests
 jinja2
 pyyaml
 html5lib
+dnslib

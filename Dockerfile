@@ -17,7 +17,7 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY nginx.conf /etc/nginx/conf.d/
 COPY ./ /app
 RUN pip install -r /app/requirements.txt
-EXPOSE 9000 9090
+EXPOSE 9000 9090 53
 WORKDIR /app
 RUN export LANG=C.UTF-8
 CMD ["/usr/bin/supervisord"]

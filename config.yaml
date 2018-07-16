@@ -13,13 +13,13 @@ proxy_domain:
 candidate_num: 20
 validate_url: "http://ipservice.163.com/isFromMainland"
 speedtest_url : "http://music.163.com/"
-speedtest_times : 2
-timeout: 10
-checker_timeout: 5
+speedtest_times : 3
+timeout: 5
+checker_timeout: 3
 check_interval: 90
 # Socket params
-buffer_size: 4096
-delay_time: 0.001
+buffer_size: 8192
+delay_time: 0.01
 
 # Proxy params
 proxy_port: 9090

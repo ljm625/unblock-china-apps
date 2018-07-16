@@ -1,4 +1,3 @@
-#!/usr/bin/env python3.6
 import json
 import logging
 import os
@@ -43,7 +42,7 @@ TYPE_LOOKUP = {
 class Record(object):
     def __init__(self, rname, rtype, args):
         self._rname = DNSLabel(rname)
-        print(rname +" "+rtype)
+        # print(rname +" "+rtype)
 
         rd_cls, self._rtype = TYPE_LOOKUP[rtype]
 
@@ -59,7 +58,7 @@ class Record(object):
             ttl = 3600 * 24
         else:
             ttl = 300
-        print(args)
+        # print(args)
         self.rr = RR(
             rname=self._rname,
             rtype=self._rtype,
@@ -148,29 +147,3 @@ class Resolver(ProxyResolver):
 
         # logger.info('no local zone found, proxying %s[%s]', request.q.qname, type_name)
         return super(Resolver,self).resolve(request, handler)
-
-
-def handle_sig(signum, frame):
-    logger.info('pid=%d, got signal: %s, stopping...', os.getpid(), signal.Signals(signum).name)
-    exit(0)
-
-
-if __name__ == '__main__':
-    signal.signal(signal.SIGTERM, handle_sig)
-
-    port = int(os.getenv('PORT', 53))
-    upstream = os.getenv('UPSTREAM', '8.8.8.8')
-    zone_file = Path(os.getenv('ZONE_FILE', '/zones/zones.txt'))
-    resolver = Resolver(upstream, zone_file)
-    udp_server = DNSServer(resolver, port=port)
-    tcp_server = DNSServer(resolver, port=port, tcp=True)
-
-    logger.info('starting DNS server on port %d, upstream DNS server "%s"', port, upstream)
-    udp_server.start_thread()
-    tcp_server.start_thread()
-
-    try:
-        while udp_server.isAlive():
-            sleep(1)
-    except KeyboardInterrupt:
-        pass

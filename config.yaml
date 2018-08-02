@@ -12,7 +12,7 @@ proxy_domain:
 
 candidate_num: 20
 validate_url: "http://ipservice.163.com/isFromMainland"
-speedtest_url : "http://music.163.com/"
+speedtest_url : "http://music.163.com/test"
 speedtest_times : 3
 timeout: 5
 checker_timeout: 3

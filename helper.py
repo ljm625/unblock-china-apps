@@ -43,6 +43,12 @@ class Helper(Process):
         logging.info("Start the pre-run session.")
         self.get_new_proxy()
         while not self.stop_job:
+            if self.proxy.params['fetch']:
+                # Issue occured. Immediate refetch
+                print("ERROR : ISSUE WITH PROXY SERVER. REFETCHING")
+                self.get_new_proxy()
+                sleep(10)
+                self.proxy.params['fetch'] = False
             if secs >= self.config.get('check_interval'):
                 secs = 0
                 if not self.checker.validate_proxy(self.checker.get_proxy(),check=True):

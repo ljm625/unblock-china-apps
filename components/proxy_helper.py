@@ -14,6 +14,7 @@ class ProxyHelper(object):
         manager = Manager()
         self._proxy = manager.list()
         self.black_list=black_list
+        self.params = manager.dict({'fetch':False})
 
     @classmethod
     def get_instance(cls):
@@ -43,11 +44,13 @@ class ProxyHelper(object):
             self._proxy[1]=value[1]
 
     def set_proxy_addr(self,host,port):
+        print("Setting proxy address to : {}:{} ".format(host,port))
         if len(self._proxy)==0:
             self._proxy.append(host)
             self._proxy.append(port)
         else:
             self._proxy[0]=host
             self._proxy[1]=port
+
 
     proxy = property(get_proxy,set_proxy)

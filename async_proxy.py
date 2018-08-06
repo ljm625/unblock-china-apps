@@ -19,7 +19,7 @@ async def handle_client(reader,writer):
         black_list = helper.black_list
         proxy = helper.proxy
         use_proxy = False
-        # print("PROXY INFO:"+proxy[0]+":"+proxy[1])
+        print("Proxy Got from Server: {}:{}"+proxy[0]+":"+proxy[1])
         if not proxy:
             raise Exception("No available proxy.")
         if dest:
@@ -30,8 +30,14 @@ async def handle_client(reader,writer):
             print("WARNING : Strange. It doesn't looks like a HTTP Request")
             use_proxy = True
         if use_proxy:
-            remote_reader, remote_writer = await asyncio.open_connection(
-                proxy[0], proxy[1])
+            try:
+                remote_reader, remote_writer = await asyncio.open_connection(
+                    proxy[0], proxy[1])
+            except ConnectionRefusedError as e:
+                print("Connect to proxy failed.")
+                writer.close()
+                proxy.params['fetch']=True
+                return
         else:
             remote_reader, remote_writer = await asyncio.open_connection(
                 dest[0], dest[1])

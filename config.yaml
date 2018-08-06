@@ -28,7 +28,7 @@ delay_time: 0.01
 proxy_address: "0.0.0.0"
 proxy_port: 9090
 
-dns_enabled : false
+dns_enabled : true
 dns_port : 53
 
 # CHANGE THE DNS IF NEEDED

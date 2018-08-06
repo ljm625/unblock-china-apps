@@ -6,13 +6,14 @@ import yaml
 class ProxyChecker(object):
     best_proxy=None
     instance=None
-    def __init__(self,proxy_list,check_url,speedtest_url,timeout=10,checker_timeout=20,speedtest_times=1):
+    def __init__(self,proxy_list,check_url,speedtest_url,timeout=10,checker_timeout=20,speedtest_times=1,black_list=[]):
         self.proxy_list=proxy_list
         self.check_url=check_url
         self.timeout=timeout
         self.checker_timeout=checker_timeout
         self.speedtest_url=speedtest_url
         self.speedtest_times = speedtest_times
+        self.black_list=black_list
 
     @classmethod
     def get_instance(cls,proxy_list=None):
@@ -31,8 +32,11 @@ class ProxyChecker(object):
             timeout=config.get('timeout')
             checker_timeout=config.get('checker_timeout')
             speedtest_times=config.get("speedtest_times")
+            black_list=config.get("proxy_domain")
+
             if check_url and timeout:
-                cls.instance=cls(proxy_list=proxy_list,check_url=check_url,speedtest_url=speedtest_url,timeout=timeout,checker_timeout=checker_timeout,speedtest_times=speedtest_times)
+                cls.instance=cls(proxy_list=proxy_list,check_url=check_url,speedtest_url=speedtest_url,timeout=timeout,
+                                 checker_timeout=checker_timeout,speedtest_times=speedtest_times,black_list=black_list)
                 return cls.instance
             else:
                 raise Exception("ERROR : The Config URL is missing")

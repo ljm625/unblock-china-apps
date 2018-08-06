@@ -1,14 +1,17 @@
-proxy_urls: 
-  - name: cnproxy
-    url: "http://cn-proxy.com/"
+proxy_urls:
   - name: proxynova
     url: "https://www.proxynova.com/proxy-server-list/country-cn/"
+  - name: cnproxy
+    url: "http://cn-proxy.com/"
 proxy_domain:
-  - 126.com
+#  - 126.com
   - music.163.com
-  - music.126.net
-  - netease.com
+#  - music.126.net
+#  - netease.com
+# THIS IS FOR SOME SONG OVERSEA CDNS. IN MOST CASES YOU DON'T REALLY NEED IT
 #  - akamaiedge.net
+# If you think the speed is too slow, try adding this line. THIS WILL INCREASE THE LOAD ON HTTP PROXY SERVERS!
+#   - p1.music.126.net.gccdn.net
 
 candidate_num: 20
 validate_url: "http://ipservice.163.com/isFromMainland"
@@ -16,14 +19,17 @@ speedtest_url : "http://music.163.com/test"
 speedtest_times : 3
 timeout: 5
 checker_timeout: 3
-check_interval: 90
+check_interval: 600
 # Socket params
 buffer_size: 8192
 delay_time: 0.01
 
 # Proxy params
+proxy_address: "0.0.0.0"
 proxy_port: 9090
 
 dns_enabled : true
 dns_port : 53
+
+# CHANGE THE DNS IF NEEDED
 upstream_dns : "8.8.8.8"

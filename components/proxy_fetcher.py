@@ -49,7 +49,7 @@ class ProxyFetcher(object):
                     except Exception as e:
                         logging.error("{}".format(e))
             print("Got Proxies:")
-            print(self.proxys)
+            print((self.proxys))
         except Exception as e:
             logging.error("{}".format(e))
 

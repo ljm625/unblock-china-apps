@@ -17,6 +17,7 @@ class HelperDns(Process):
     stop_job = False
 
     def __init__(self,config_file='config.yaml'):
+        Process.__init__(self)
         self.config=self.yaml_reader(config_file)
         self.upstream = self.config['upstream_dns']
         self.port = self.config['dns_port']

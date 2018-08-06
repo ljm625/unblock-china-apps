@@ -1,25 +1,25 @@
 # This file is used to pick correct proxy and save to localhost.
 from time import sleep
-import threading
 
 import logging
 import yaml
+from multiprocessing import Process
 
 from components.proxy_checker import ProxyChecker
 from components.proxy_fetcher import ProxyFetcher
 
 
-class Helper(threading.Thread):
+class Helper(Process):
     stop_job = False
 
-    def __init__(self,threadID,name,config_file='config.yaml'):
-        threading.Thread.__init__(self,name=name)
-        self.threadID = threadID
+    def __init__(self,name,proxy,config_file='config.yaml'):
+        Process.__init__(self)
         self.name = name
         self.config=self.yaml_reader(config_file)
         self.fetcher = ProxyFetcher.get_instance()
-        list = self.fetcher.get_proxy_list()
+        # list = self.fetcher.get_proxy_list()
         self.checker = ProxyChecker.get_instance(list)
+        self.proxy=proxy
 
 
     def yaml_reader(self,config):
@@ -30,14 +30,15 @@ class Helper(threading.Thread):
         try:
             list = self.fetcher.get_proxy_list(refresh=True)
             self.checker.update_list(list)
-            proxy=self.checker.get_proxy(refresh=True)
+            proxy= self.checker.get_proxy(refresh=True)
+            self.proxy.set_proxy_addr(proxy[0],proxy[1])
         except AttributeError as e:
             list = self.fetcher.get_proxy_list(refresh=True)
             self.checker.update_list(list)
-            proxy = self.checker.get_proxy(refresh=True)
-
+            proxy= self.checker.get_proxy(refresh=True)
+            self.proxy.set_proxy_addr(proxy[0],proxy[1])
     def run(self):
-        logging.info("Started the Helper thread.")
+        logging.info("Started the Helper process.")
         secs = 0
         logging.info("Start the pre-run session.")
         self.get_new_proxy()

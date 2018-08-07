@@ -33,3 +33,7 @@ dns_port : 53
 
 # CHANGE THE DNS IF NEEDED
 upstream_dns : "8.8.8.8"
+
+# Disable normal HTTP Proxy
+# this is useful if u make a public server on the internet and avoid them to use it as a public HTTP Proxy. (Need to use with PAC or DNS)
+disable_proxy : true

@@ -19,7 +19,7 @@ async def handle_client(reader,writer):
         black_list = helper.black_list
         proxy = helper.proxy
         use_proxy = False
-        print("Proxy Got from Server: {}:{}".format(proxy[0],proxy[1]))
+        # print("Proxy Got from Server: {}:{}".format(proxy[0],proxy[1]))
         if not proxy:
             raise Exception("No available proxy.")
         if dest:
@@ -38,12 +38,18 @@ async def handle_client(reader,writer):
                 writer.close()
                 helper.params['fetch']=True
                 return
+        elif helper.disable_proxy:
+            writer.close()
+            return
         else:
             remote_reader, remote_writer = await asyncio.open_connection(
                 dest[0], dest[1])
         pipe1 = pipe_with_predata(reader,remote_writer,data)
         pipe2 = pipe(remote_reader,writer)
         await asyncio.gather(pipe1,pipe2)
+    except Exception as e:
+        print("Exception in Async Process: {}".format(e))
+
     finally:
         writer.close()
     #     data = await reader.read(100)

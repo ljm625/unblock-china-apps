@@ -10,11 +10,12 @@ from multiprocessing import Manager
 
 class ProxyHelper(object):
     instance = None
-    def __init__(self,black_list=[]):
+    def __init__(self,black_list=[],disable_proxy=False):
         manager = Manager()
         self._proxy = manager.list()
         self.black_list=black_list
         self.params = manager.dict({'fetch':False})
+        self.disable_proxy = disable_proxy
 
     @classmethod
     def get_instance(cls):
@@ -27,7 +28,8 @@ class ProxyHelper(object):
         else:
             config = yaml_loader('config.yaml')
             black_list = config.get("proxy_domain")
-            cls.instance=cls(black_list)
+            disable_proxy = config.get("disable_proxy")
+            cls.instance=cls(black_list,disable_proxy)
 
             return cls.instance
 

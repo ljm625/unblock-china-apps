@@ -47,7 +47,7 @@ delay_time: 0.01
 proxy_address: "0.0.0.0"
 proxy_port: 9090
 
-dns_enabled : false
+dns_enabled : true
 dns_port : 53
 
 # CHANGE THE DNS IF NEEDED
@@ -55,4 +55,4 @@ upstream_dns : "8.8.8.8"
 
 # Disable normal HTTP Proxy
 # this is useful if u make a public server on the internet and avoid them to use it as a public HTTP Proxy. (Need to use with PAC or DNS)
-disable_proxy : false
+disable_proxy : true

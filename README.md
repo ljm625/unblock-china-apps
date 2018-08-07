@@ -68,19 +68,33 @@ Or 将你的网易云设置**http代理**为 你的ip:9090
 proxy_url: 采集代理的proxy网站
 proxy_domain:
   - 代理的http请求域名列表
-
+dns_domain:
+  - dns劫持的域名列表
 candidate_num: 抓取的最多代理数目
 validate_url: 验证代理的URL
+speedtest_url : 测速的URL
 timeout: 验证超时时间（S）
 checker_timeout: 二次验证超时时间（S）
-check_interval: 检测时间（S）
+check_interval: 检测时间（S），建议至少10分钟,现在如果服务器代理出问题会自动尝试更换其他代理。
 # Socket params 一些socket参数，不推荐改动
 buffer_size: 4096
 delay_time: 0.001
+# 这两个参数现在没用了
 
 # Proxy params
+proxy_address: 代理IP，一般为0.0.0.0即可
 proxy_port: 代理端口设置
 
+
+dns_enabled : 是否启用DNS服务器
+dns_port : DNS服务器端口
+
+# CHANGE THE DNS IF NEEDED
+upstream_dns : 上级查询dns
+
+# Disable normal HTTP Proxy
+# this is useful if u make a public server on the internet and avoid them to use it as a public HTTP Proxy. (Need to use with PAC or DNS)
+disable_proxy : 是否启用白名单外的域名代理，如果使用dns模式，而且在公网服务器使用的话，强烈建议关闭，防止被攻击。
 ```
 
 
@@ -110,5 +124,9 @@ Update 2017/11/01 : Update 了一下具体参数，代理效果更好
 
 欢迎大家进行测试，提出issue，如果有任何问题，也可以发信到ljm625#gmail.com咨询
 
+
+## TODO
+
+拟实现当当前代理出现问题时，马上切换到之前抓取的备用代理使用，直到新的代理抓取完毕。
 
 # English Version pending

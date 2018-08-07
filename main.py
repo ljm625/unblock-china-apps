@@ -47,10 +47,22 @@ if __name__ == '__main__':
         # Global Proxy across processes.
 
     # Start DNS Server.
-    helper_dns = HelperDns("config.yaml")
     if config["dns_enabled"]:
-        print("INFO : DNS Server Enabled")
-        helper_dns.start()
+        pid = os.fork()
+        if pid == 0:
+            helper_dns = HelperDns("config.yaml")
+            print("INFO : DNS Server Enabled")
+            helper_dns.start()
+            try:
+                while True:
+                    sleep(1)
+            except KeyboardInterrupt:
+                logging.info("User shutdown request received. Starting to shutdown")
+            except Exception as e:
+                logging.error("Critical Unknown issue received. Shutting down. {}".format(e))
+            logging.info("All Shutdown")
+            helper_dns.stop()
+            sys.exit(1)
 
     proxy_helper=ProxyHelper.get_instance()
     helper = Helper("Helper",proxy_helper)
@@ -94,8 +106,6 @@ if __name__ == '__main__':
     loop.close()
     helper.stop()
     logging.info("Helper Stopped")
-    if config["dns_enabled"]:
-        helper_dns.stop()
     # server.shutdown()
     logging.info("All Shutdown")
     sys.exit(1)

@@ -7,6 +7,7 @@ proxy_domain:
 #  - 126.com
   - ipservice.163.com
   - music.163.com
+  - ip.ws.126.net
 #  - music.126.net
 #  - netease.com
 # THIS IS FOR SOME SONG OVERSEA CDNS. IN MOST CASES YOU DON'T REALLY NEED IT
@@ -19,13 +20,15 @@ dns_domain:
 #  - 126.com
 #  - ipservice.163.com
   - music.163.com
+  - ip.ws.126.net
+  - music.httpdns.c.163.com
 #  - music.126.net
 #  - netease.com
 # THIS IS FOR SOME SONG OVERSEA CDNS. IN MOST CASES YOU DON'T REALLY NEED IT
-  - e12796.f.akamaiedge.net
-  - e12796.akamaiedge.net
-# If you think the speed is too slow, try adding this line. THIS WILL INCREASE THE LOAD ON HTTP PROXY SERVERS!
-  - p1.music.126.net.gccdn.net
+#  - e12796.f.akamaiedge.net
+#  - e12796.akamaiedge.net
+## If you think the speed is too slow, try adding this line. THIS WILL INCREASE THE LOAD ON HTTP PROXY SERVERS!
+#  - p1.music.126.net.gccdn.net
 
 
 

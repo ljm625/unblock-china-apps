@@ -49,6 +49,11 @@ async def handle_client(reader,writer):
         await asyncio.gather(pipe1,pipe2)
     except Exception as e:
         print("Exception in Async Process: {}".format(e))
+        if "Connection reset" in str(e):
+            helper.params['fetch'] = True
+            print("Trying to find new server.")
+
+
 
     finally:
         writer.close()

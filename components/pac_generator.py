@@ -25,7 +25,7 @@ class PacGenerator(object):
 
     def build_pac(self):
         info={}
-        info['proxy_domain']=self.config['proxy_domain']
+        info['proxy_domain']=self.config['dns_domain']
         try:
             info['proxy_ip']=os.environ["IPADDR"]
         except:

@@ -47,7 +47,7 @@ class ProxyFetcher(object):
                     try:
                         self.proxys.append(get_data_on_profile(server['name'],proxy_list[i]))
                     except Exception as e:
-                        logging.error("{}".format(e))
+                        pass
             print("Got Proxies:")
             print((self.proxys))
         except Exception as e:

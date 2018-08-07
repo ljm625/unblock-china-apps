@@ -45,7 +45,7 @@ class HelperDns(Process):
         except:
             ip_addr=self.get_ip()
 
-        for url in self.config['proxy_domain']:
+        for url in self.config['dns_domain']:
             self.dns_data.append({"rname":url,"rtype":"A","args":ip_addr})
 
 

@@ -12,13 +12,15 @@ It also have a fake DNS Server module, which u can use and it will direct all ho
 More detailed info pls check in Chinese.
 
 
-## 旧版更新
+## 中文
 
 本程序主要用于解除网易云**等软件**的海外限制问题
 
-**不推荐用于网易云，网易云直接nginx修改X-REAL-IP伪造即可，并不需要真实国内代理服务器。**
+**目前不推荐用于网易云，网易云直接nginx修改X-REAL-IP伪造即可，并不需要真实国内代理服务器，因此对网易云，该方案为备选方案。**
 
 **运行本程序的服务器并不需要在中国！**
+
+
 
 ## How to use ?
 
@@ -115,6 +117,8 @@ disable_proxy : 是否启用白名单外的域名代理，如果使用dns模式�
 
 
 ## Limitations and Improvements
+
+- https的代理实现仍然在议程之中。
 
 - 目前仅限http代理，比较大的问题是他只能在http上work，如果是其他conn，比如https则会出现问题，下一步是准备实现一个socks5的反代
 

@@ -1,6 +1,22 @@
-# 解除网易云音乐海外限制
+# HTTP Proxy Auto Fetching and act as reverse proxy.
+
+This program is useful when you need specific HTTP Proxy, but since HTTP Proxy are easy to get, but usually are not stabilized.
+
+
+The program will fetch the proxy from proxy websites, test them, then act as a proxy itself. For user, you just need to set proxy to the program and enjoy surfing.
+
+It's very useful for some location restriction applications. But currently only support HTTP connections.
+
+It also have a fake DNS Server module, which u can use and it will direct all host defined in the config to the proxy.(80 port and 53 port required.)
+
+More detailed info pls check in Chinese.
+
+
+## 旧版更新
 
 本程序主要用于解除网易云**等软件**的海外限制问题
+
+**不推荐用于网易云，网易云直接nginx修改X-REAL-IP伪造即可，并不需要真实国内代理服务器。**
 
 **运行本程序的服务器并不需要在中国！**
 
@@ -104,6 +120,8 @@ disable_proxy : 是否启用白名单外的域名代理，如果使用dns模式�
 
 
 ## Update History
+Update 2018/08/08 : 网易云看来判断非常简单，没必要用这么重的解决方案了。推荐使用nginx 加header的方式实现。
+
 Update 2018/08/07 : 最近更新太多。。PAC方法基本已死，没什么用了，推荐dns或者proxifier配合劫持网易云使用，亲测没问题。
 
 集成了伪装dns的代码，用来修改dns代理。

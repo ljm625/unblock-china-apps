@@ -34,7 +34,16 @@ dns_domain:
 
 candidate_num: 20
 validate_url: "http://ipservice.163.com/isFromMainland"
-speedtest_url : "https://music.163.com"
+
+# HTTPS Related options
+
+speedtest_url : "http://music.163.com/test"
+speedtest_url_https : "https://music.163.com"
+
+https_enabled : true,
+
+# HTTPS Related options
+
 speedtest_times : 3
 timeout: 5
 checker_timeout: 3

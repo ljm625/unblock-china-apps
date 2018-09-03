@@ -76,8 +76,8 @@ async def http_check(reader):
     if not reader.at_eof():
         data = await reader.read(4096)
         try:
-            raw_data = data.decode()
-            print(raw_data)
+            # raw_data = data.decode()
+            # print(raw_data)
             host,port,https = get_orig_host(data.decode())
             if host and port:
                 return data,(host,port),https

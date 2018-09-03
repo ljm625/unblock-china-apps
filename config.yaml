@@ -8,7 +8,6 @@ proxy_domain:
   - ipservice.163.com
   - music.163.com
   - ip.ws.126.net
-  - www.baidu.com
 #  - music.126.net
 #  - netease.com
 # THIS IS FOR SOME SONG OVERSEA CDNS. IN MOST CASES YOU DON'T REALLY NEED IT

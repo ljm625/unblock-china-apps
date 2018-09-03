@@ -10,8 +10,9 @@ from components.proxy_helper import ProxyHelper
 
 
 async def handle_client(reader,writer):
+    # Add HTTPS support (Connect proxy.)
     try:
-        data,dest = await http_check(reader)
+        data,dest,https = await http_check(reader)
         if not data:
             writer.close()
             return
@@ -44,6 +45,12 @@ async def handle_client(reader,writer):
         else:
             remote_reader, remote_writer = await asyncio.open_connection(
                 dest[0], dest[1])
+        if not use_proxy and https:
+            https_respond(writer)
+            pipe1 = pipe(reader, remote_writer)
+            pipe2 = pipe(remote_reader, writer)
+            await asyncio.gather(pipe1, pipe2)
+            return
         pipe1 = pipe_with_predata(reader,remote_writer,data)
         pipe2 = pipe(remote_reader,writer)
         await asyncio.gather(pipe1,pipe2)
@@ -70,15 +77,15 @@ async def http_check(reader):
         data = await reader.read(4096)
         try:
             raw_data = data.decode()
-            # print(raw_data)
-            host,port = get_orig_host(data.decode())
+            print(raw_data)
+            host,port,https = get_orig_host(data.decode())
             if host and port:
-                return data,(host,port)
+                return data,(host,port),https
             else:
-                return data,None
+                return data,None,https
         except UnicodeDecodeError as e:
             pass
-        return data,None
+        return data,None,False
 
 async def pipe_with_predata(reader, writer,data):
     try:
@@ -90,6 +97,14 @@ async def pipe_with_predata(reader, writer,data):
     finally:
         writer.close()
 
+def https_respond(writer):
+    # try:
+        reply = "HTTP/1.0 200 Connection established\r\n"
+        reply += "Proxy-agent: Pyx\r\n"
+        reply += "\r\n"
+        writer.write(reply.encode())
+    # finally:
+    #     writer.close()
 
 async def pipe(reader, writer):
     try:
@@ -101,15 +116,18 @@ async def pipe(reader, writer):
         writer.close()
 
 def get_orig_host(input):
+    https=False
+    if "CONNECT" in str(input):
+        https=True
     datas = str(input).split('\r\n')
     for data in datas:
         if 'Host:' in data:
             data_list=data.split(":")
             if len(data_list)==2:
-                return data_list[1].strip(), 80
+                return data_list[1].strip(), 80,https
             elif len(data_list)==3:
-                return data_list[1].strip(), int(data_list[2].strip())
-    return None,None
+                return data_list[1].strip(), int(data_list[2].strip()),https
+    return None,None,https
 
 
 

@@ -43,7 +43,8 @@ class ProxyChecker(object):
 
     def validate_proxy(self,proxy,check=False):
         def build_proxy():
-            return {"http": "http://{}:{}".format(proxy[0],proxy[1]) }
+            return {"http": "http://{}:{}".format(proxy[0],proxy[1]),
+                    "https": "http://{}:{}".format(proxy[0],proxy[1])}
         try:
             if check:
                 resp = requests.get(self.check_url, proxies=build_proxy(), timeout=self.checker_timeout)

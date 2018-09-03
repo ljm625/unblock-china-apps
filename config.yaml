@@ -8,6 +8,7 @@ proxy_domain:
   - ipservice.163.com
   - music.163.com
   - ip.ws.126.net
+  - www.baidu.com
 #  - music.126.net
 #  - netease.com
 # THIS IS FOR SOME SONG OVERSEA CDNS. IN MOST CASES YOU DON'T REALLY NEED IT
@@ -34,7 +35,7 @@ dns_domain:
 
 candidate_num: 20
 validate_url: "http://ipservice.163.com/isFromMainland"
-speedtest_url : "http://music.163.com/test"
+speedtest_url : "https://music.163.com"
 speedtest_times : 3
 timeout: 5
 checker_timeout: 3
@@ -55,4 +56,4 @@ upstream_dns : "8.8.8.8"
 
 # Disable normal HTTP Proxy
 # this is useful if u make a public server on the internet and avoid them to use it as a public HTTP Proxy. (Need to use with PAC or DNS)
-disable_proxy : true
+disable_proxy : false

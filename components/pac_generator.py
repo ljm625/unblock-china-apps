@@ -4,13 +4,17 @@ from jinja2 import Environment
 from jinja2 import FileSystemLoader
 import os
 
+from components.blocksites_updater import BlocksitesUpdater
+
+
 class PacGenerator(object):
-    def __init__(self,config):
+    def __init__(self,config,block_list=None):
         self.env = Environment(loader=FileSystemLoader('template'))
         def yaml_loader(file):
             with open(file) as f:
                 return yaml.load(f)
         self.config=yaml_loader(config)
+        self.block_list=block_list
 
 
     def get_ip(self):
@@ -25,15 +29,20 @@ class PacGenerator(object):
 
     def build_pac(self):
         info={}
-        info['proxy_domain']=self.config['dns_domain']
+        if self.block_list:
+            info['block_urls']=self.block_list
+        else:
+            info['block_urls']=self.config['dns_domain']
+        info['direct_urls']=self.config['direct_urls']
         try:
             info['proxy_ip']=os.environ["IPADDR"]
         except:
             info['proxy_ip']=self.get_ip()
         info['proxy_port']=self.config.get("proxy_port")
-        template = self.env.get_template("proxy.pac")
+        template = self.env.get_template("new_proxy.pac")
         self.file_writer(template.render(info=info))
 
     def file_writer(self,data):
         with open("pac/proxy.pac",'w+') as file:
             file.write(data)
+

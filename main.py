@@ -11,6 +11,7 @@ from multiprocessing import Value
 import yaml
 
 from async_proxy import handle_client
+from components.blocksites_updater import BlocksitesUpdater
 from components.pac_generator import PacGenerator
 from components.proxy_checker import ProxyChecker
 from components.proxy_helper import ProxyHelper
@@ -26,8 +27,16 @@ def yaml_loader(file):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    PacGenerator("config.yaml").build_pac()
+
     config = yaml_loader("config.yaml")
+    if config.get('enable_blocksites_updater'):
+        block_generator = BlocksitesUpdater(config.get("updater_url"))
+    else:
+        block_generator = None
+
+    PacGenerator("config.yaml",block_generator.data if block_generator else None).build_pac()
+
+
 
     # pid = os.fork()
     # if pid == 0:
@@ -65,6 +74,10 @@ if __name__ == '__main__':
             sys.exit(1)
 
     proxy_helper=ProxyHelper.get_instance()
+
+    if block_generator:
+        proxy_helper.black_list=list(block_generator.domain)
+
     helper = Helper("Helper",proxy_helper)
     helper.start()
 

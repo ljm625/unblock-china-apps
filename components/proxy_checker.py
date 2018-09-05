@@ -28,7 +28,11 @@ class ProxyChecker(object):
         else:
             config=yaml_loader('config.yaml')
             check_url=config.get('validate_url')
-            speedtest_url=config.get('speedtest_url')
+            https_enabled = config.get('https_enabled')
+            if https_enabled:
+                speedtest_url=config.get('speedtest_url_https')
+            else:
+                speedtest_url=config.get('speedtest_url')
             timeout=config.get('timeout')
             checker_timeout=config.get('checker_timeout')
             speedtest_times=config.get("speedtest_times")

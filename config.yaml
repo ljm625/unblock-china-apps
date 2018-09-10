@@ -8,6 +8,8 @@ proxy_domain:
   - ipservice.163.com
   - music.163.com
   - ip.ws.126.net
+  - m10.music.126.net
+
 #  - music.126.net
 #  - netease.com
 # THIS IS FOR SOME SONG OVERSEA CDNS. IN MOST CASES YOU DON'T REALLY NEED IT
@@ -22,6 +24,8 @@ dns_domain:
   - music.163.com
   - ip.ws.126.net
   - music.httpdns.c.163.com
+  - m10.music.126.net
+
 #  - music.126.net
 #  - netease.com
 # THIS IS FOR SOME SONG OVERSEA CDNS. IN MOST CASES YOU DON'T REALLY NEED IT
@@ -40,21 +44,21 @@ validate_url: "http://ipservice.163.com/isFromMainland"
 speedtest_url : "http://music.163.com/test"
 speedtest_url_https : "https://music.163.com"
 
-https_enabled : true
+https_enabled : false
 
 # HTTPS Related options
 
 
 # Blocksites updater
 
-enable_blocksites_updater : true
+enable_blocksites_updater : false
 updater_url : ""
 
 # Blocksites updater
 
 speedtest_times : 3
 timeout: 5
-checker_timeout: 3
+checker_timeout: 5
 check_interval: 600
 # Socket params
 buffer_size: 8192

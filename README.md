@@ -18,8 +18,7 @@ More detailed info pls check in Chinese.
 
 目前已测试，在合适的规则下，支持各大热门网站。(对手机APP的支持未测试，因为Android和IOS对PAC的支持比较迷。。)
 
-**目前不推荐用于网易云，网易云直接nginx修改X-REAL-IP伪造即可，并不需要真实国内代理服务器，因此对网易云，该方案为备选方案。**
-
+**为目前网易云唯一解决方案**
 **运行本程序的服务器并不需要在中国！**
 
 
@@ -45,7 +44,7 @@ docker run -p 80:9090 -p 53:53 -p 53:53/udp -p 9000:9000 -p 9090:9090 -d ljm625/
 运行：
 ```dockerfile
 
-docker run -p 80:9090 -p 53:53 -p 53:53/udp -p 9000:9000 -p 9090:9090 **-e "IPADDR=127.0.0.1"** -d ljm625/unblock-netease
+docker run -p 80:9090 -p 53:53 -p 53:53/udp -p 9000:9000 -p 9090:9090 -e "IPADDR=127.0.0.1" -d ljm625/unblock-netease
 ```
 
 之后将设备的dns服务器改为服务器IP或者本机（127.0.0.1），打开网易云稍等片刻，即可享受国区网易云！
@@ -126,6 +125,8 @@ disable_proxy : 是否启用白名单外的域名代理，如果使用dns模式�
 
 
 ## Update History
+Update 2018/12/26 : 网易云修改了判断逻辑，并封杀了大量代理服务器。目前在实现新的代理站点抓取以及Socks5的支持，Work in Progress
+
 Update 2018/08/08 : 网易云看来判断非常简单，没必要用这么重的解决方案了。推荐使用nginx 加header的方式实现。
 
 Update 2018/08/07 : 最近更新太多。。PAC方法基本已死，没什么用了，推荐dns或者proxifier配合劫持网易云使用，亲测没问题。

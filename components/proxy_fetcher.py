@@ -42,12 +42,10 @@ class ProxyFetcher(object):
             for server in self.urls:
                 data=self.proxy_fetcher(server['url'])
                 soup = BeautifulSoup(data,"html5lib")
-                proxy_list=soup.select("tbody tr")
-                for i in range(0,self.candidate):
-                    try:
-                        self.proxys.append(get_data_on_profile(server['name'],proxy_list[i]))
-                    except Exception as e:
-                        pass
+                try:
+                    self.proxys.extend(get_data_on_profile(server['name'],soup,self.candidate))
+                except Exception as e:
+                    pass
             print("Got Proxies:")
             print((self.proxys))
         except Exception as e:

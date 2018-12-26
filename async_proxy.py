@@ -5,7 +5,7 @@ A New way of implementation. Try to use asyncio to solve the issue with laggy pr
 
 
 import asyncio
-
+import aiosocks
 from components.proxy_helper import ProxyHelper
 
 
@@ -32,7 +32,13 @@ async def handle_client(reader,writer):
             use_proxy = True
         if use_proxy:
             try:
-                remote_reader, remote_writer = await asyncio.open_connection(
+                if proxy[2]=='socks':
+                    socks5_addr = aiosocks.Socks5Addr(proxy[0],proxy[1])
+                    remote_reader, remote_writer = await aiosocks.open_connection(
+                        proxy=socks5_addr, dst=[dest[0],dest[1]], remote_resolve=True)
+
+                else:
+                    remote_reader, remote_writer = await asyncio.open_connection(
                     proxy[0], proxy[1])
             except ConnectionRefusedError as e:
                 print("Connect to proxy failed.")

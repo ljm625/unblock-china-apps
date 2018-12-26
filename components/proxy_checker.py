@@ -47,8 +47,12 @@ class ProxyChecker(object):
 
     def validate_proxy(self,proxy,check=False):
         def build_proxy():
-            return {"http": "http://{}:{}".format(proxy[0],proxy[1]),
-                    "https": "http://{}:{}".format(proxy[0],proxy[1])}
+            if proxy[2]=='http':
+                return {"http": "socks5://{}:{}".format(proxy[0],proxy[1]),
+                        "https": "socks5://{}:{}".format(proxy[0],proxy[1])}
+            elif proxy[2]=='socks':
+                return {"http": "socks5://{}:{}".format(proxy[0],proxy[1]),
+                        "https": "socks5://{}:{}".format(proxy[0],proxy[1])}
         try:
             if check:
                 resp = requests.get(self.check_url, proxies=build_proxy(), timeout=self.checker_timeout)
@@ -83,7 +87,7 @@ class ProxyChecker(object):
         if not best:
             raise AttributeError("ERROR : No available servers! ")
         self.best_proxy=best
-        logging.info("Best Proxy: {}:{}".format(self.best_proxy[0], self.best_proxy[1]))
+        logging.info("Best Proxy: {}:{} {}".format(self.best_proxy[0], self.best_proxy[1], self.best_proxy[2]))
 
 
     def get_proxy(self,refresh=False):

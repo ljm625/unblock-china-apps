@@ -114,17 +114,23 @@ upstream_dns : 上级查询dns
 # Disable normal HTTP Proxy
 # this is useful if u make a public server on the internet and avoid them to use it as a public HTTP Proxy. (Need to use with PAC or DNS)
 disable_proxy : 是否启用白名单外的域名代理，如果使用dns模式，而且在公网服务器使用的话，强烈建议关闭，防止被攻击。
+
+
+enable_socks : 是否启用socks5代理
+# Enable http/https proxy
+enable_http : 是否启用http/https代理
+
+
 ```
 
 
 ## Limitations and Improvements
 
-- https的代理实现仍然在议程之中。
-
-- 目前仅限http代理，比较大的问题是他只能在http上work，如果是其他conn，比如https则会出现问题，下一步是准备实现一个socks5的反代
-
+TBD
 
 ## Update History
+Update 2019/03/04 : 新站点的抓取已实现，SOCKS5以及HTTPS代理已支持。目前测试可以正常使用，请低调。另外由于实现了HTTPS的发端和收端，因此理论上可以用来代理所有检测国内IP的软件。
+
 Update 2018/12/26 : 网易云修改了判断逻辑，并封杀了大量代理服务器。目前在实现新的代理站点抓取以及Socks5的支持，Work in Progress
 
 Update 2018/08/08 : 网易云看来判断非常简单，没必要用这么重的解决方案了。推荐使用nginx 加header的方式实现。

@@ -44,15 +44,20 @@ class ProxyHelper(object):
         else:
             self._proxy[0]=value[0]
             self._proxy[1]=value[1]
+            self._proxy[2]=value[2]
 
-    def set_proxy_addr(self,host,port):
-        print("Setting proxy address to : {}:{} ".format(host,port))
+
+    def set_proxy_addr(self,host,port,protocol):
+        print("Setting proxy address to : {}:{} {} ".format(host,port,protocol))
         if len(self._proxy)==0:
             self._proxy.append(host)
             self._proxy.append(port)
+            self._proxy.append(protocol)
+
         else:
             self._proxy[0]=host
             self._proxy[1]=port
+            self._proxy[2]=protocol
 
 
     proxy = property(get_proxy,set_proxy)

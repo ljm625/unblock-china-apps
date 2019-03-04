@@ -31,12 +31,12 @@ class Helper(Process):
             list = self.fetcher.get_proxy_list(refresh=True)
             self.checker.update_list(list)
             proxy= self.checker.get_proxy(refresh=True)
-            self.proxy.set_proxy_addr(proxy[0],proxy[1])
+            self.proxy.set_proxy_addr(proxy[0],proxy[1],proxy[2])
         except AttributeError as e:
             list = self.fetcher.get_proxy_list(refresh=True)
             self.checker.update_list(list)
             proxy= self.checker.get_proxy(refresh=True)
-            self.proxy.set_proxy_addr(proxy[0],proxy[1])
+            self.proxy.set_proxy_addr(proxy[0],proxy[1],proxy[2])
     def run(self):
         logging.info("Started the Helper process.")
         secs = 0

@@ -83,7 +83,7 @@ disable_proxy : false
 # Enable socks proxy
 enable_socks : true
 # Enable http/https proxy
-enable_http : true
+enable_http : false
 
 
 

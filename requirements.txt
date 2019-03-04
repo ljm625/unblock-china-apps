@@ -7,3 +7,4 @@ dnslib
 pysocks
 requests[socks]
 aiosocks
+selenium

@@ -3,10 +3,14 @@ import requests
 import yaml
 from bs4 import BeautifulSoup
 from profile.proxy_rules import get_data_on_profile
+from selenium import webdriver
+
 
 class ProxyFetcher(object):
     instance = None
     proxys=None
+    driver = webdriver.PhantomJS()
+
     def __init__(self,urls,candidate_num=5):
         self.urls=urls
         self.candidate=candidate_num
@@ -32,20 +36,28 @@ class ProxyFetcher(object):
     def proxy_fetcher(self,url):
         resp=requests.get(url)
         if resp.status_code<300:
-            return resp.content
+            self.driver.get(url)
+            return self.driver
         else:
             raise Exception("ERROR : The Proxy Website is DOWN.")
 
     def proxy_parser(self):
+
         try:
             self.proxys=[]
             for server in self.urls:
-                data=self.proxy_fetcher(server['url'])
-                soup = BeautifulSoup(data,"html5lib")
+                # data=self.proxy_fetcher(server['url'])
+                # soup = BeautifulSoup(data,"html5lib")
+                # try:
+                #     self.proxys.extend(get_data_on_profile(server['name'],soup,self.candidate))
+                # except Exception as e:
+                #     pass
+                driver = self.proxy_fetcher(server['url'])
                 try:
-                    self.proxys.extend(get_data_on_profile(server['name'],soup,self.candidate))
+                    self.proxys.extend(get_data_on_profile(server['name'],driver,self.candidate))
                 except Exception as e:
                     pass
+
             print("Got Proxies:")
             print((self.proxys))
         except Exception as e:

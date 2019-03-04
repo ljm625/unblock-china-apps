@@ -32,7 +32,7 @@ async def handle_client(reader,writer):
             use_proxy = True
         if use_proxy:
             try:
-                if proxy[2]=='socks':
+                if proxy[2]=='SOCKS5':
                     socks5_addr = aiosocks.Socks5Addr(proxy[0],proxy[1])
                     remote_reader, remote_writer = await aiosocks.open_connection(
                         proxy=socks5_addr, dst=[dest[0],dest[1]], remote_resolve=True)

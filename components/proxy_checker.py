@@ -47,10 +47,10 @@ class ProxyChecker(object):
 
     def validate_proxy(self,proxy,check=False):
         def build_proxy():
-            if proxy[2]=='http':
-                return {"http": "socks5://{}:{}".format(proxy[0],proxy[1]),
-                        "https": "socks5://{}:{}".format(proxy[0],proxy[1])}
-            elif proxy[2]=='socks':
+            if proxy[2]=='HTTP' or proxy[2]=="HTTPS":
+                return {"http": "http://{}:{}".format(proxy[0],proxy[1]),
+                        "https": "http://{}:{}".format(proxy[0],proxy[1])}
+            elif proxy[2]=='SOCKS5':
                 return {"http": "socks5://{}:{}".format(proxy[0],proxy[1]),
                         "https": "socks5://{}:{}".format(proxy[0],proxy[1])}
         try:

@@ -80,6 +80,12 @@ upstream_dns : "8.8.8.8"
 # this is useful if u make a public server on the internet and avoid them to use it as a public HTTP Proxy. (Need to use with PAC or DNS)
 disable_proxy : false
 
+# Enable socks proxy
+enable_socks : true
+# Enable http/https proxy
+enable_http : true
+
+
 
 # Auto Generate Infos.
 

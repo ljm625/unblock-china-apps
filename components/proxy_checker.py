@@ -6,7 +6,7 @@ import yaml
 class ProxyChecker(object):
     best_proxy=None
     instance=None
-    def __init__(self,proxy_list,check_url,speedtest_url,timeout=10,checker_timeout=20,speedtest_times=1,black_list=[]):
+    def __init__(self,proxy_list,check_url,speedtest_url,timeout=10,checker_timeout=20,speedtest_times=1,black_list=[],enable_socks=True,enable_http=True):
         self.proxy_list=proxy_list
         self.check_url=check_url
         self.timeout=timeout
@@ -14,6 +14,8 @@ class ProxyChecker(object):
         self.speedtest_url=speedtest_url
         self.speedtest_times = speedtest_times
         self.black_list=black_list
+        self.enable_http=enable_http
+        self.enable_socks=enable_socks
 
     @classmethod
     def get_instance(cls,proxy_list=None):
@@ -37,10 +39,12 @@ class ProxyChecker(object):
             checker_timeout=config.get('checker_timeout')
             speedtest_times=config.get("speedtest_times")
             black_list=config.get("proxy_domain")
+            enable_socks=config.get("enable_socks")
+            enable_http=config.get("enable_http")
 
             if check_url and timeout:
                 cls.instance=cls(proxy_list=proxy_list,check_url=check_url,speedtest_url=speedtest_url,timeout=timeout,
-                                 checker_timeout=checker_timeout,speedtest_times=speedtest_times,black_list=black_list)
+                                 checker_timeout=checker_timeout,speedtest_times=speedtest_times,black_list=black_list,enable_socks=enable_socks,enable_http=enable_http)
                 return cls.instance
             else:
                 raise Exception("ERROR : The Config URL is missing")
@@ -54,6 +58,13 @@ class ProxyChecker(object):
                 return {"http": "socks5://{}:{}".format(proxy[0],proxy[1]),
                         "https": "socks5://{}:{}".format(proxy[0],proxy[1])}
         try:
+            if (proxy[2]=='HTTP' or proxy[2]=="HTTPS") and self.enable_http:
+                pass
+            elif proxy[2]=='SOCKS5' and self.enable_socks:
+                pass
+            else:
+                return None
+
             if check:
                 resp = requests.get(self.check_url, proxies=build_proxy(), timeout=self.checker_timeout)
             else:

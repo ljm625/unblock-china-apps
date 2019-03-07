@@ -69,7 +69,7 @@ class ProxyChecker(object):
                 resp = requests.get(self.check_url, proxies=build_proxy(), timeout=self.checker_timeout)
             else:
                 resp=requests.get(self.check_url,proxies=build_proxy(),timeout=self.timeout)
-            if resp.status_code < 300 and resp.text=='true':
+            if resp.status_code < 300 and resp.json()['countryCode']=='CN':
                 total_time =0
                 for i in range(0,self.speedtest_times):
                     resp_speed = requests.get(self.speedtest_url,proxies=build_proxy(),timeout=self.timeout)

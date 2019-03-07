@@ -38,8 +38,8 @@ dns_domain:
 
 
 
-candidate_num: 20
-validate_url: "http://ipservice.163.com/isFromMainland"
+candidate_num: 30
+validate_url: "http://ip-api.com/json/"
 
 # HTTPS Related options
 
@@ -70,7 +70,7 @@ delay_time: 0.01
 proxy_address: "0.0.0.0"
 proxy_port: 9090
 
-dns_enabled : true
+dns_enabled : false
 dns_port : 53
 
 # CHANGE THE DNS IF NEEDED

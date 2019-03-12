@@ -60,4 +60,15 @@ def get_data_on_profile(profile,driver,number):
             proxy_info = proxy_list[i].text.strip().split(" ")
             result.append([proxy_info[1].split(":")[0],proxy_info[1].split(":")[1],proxy_info[2]])
         print(driver)
+
+    elif profile=='gatherproxy':
+
+        proxy_list = driver.find_elements_by_css_selector("tr")
+        if len(proxy_list)<number+2:
+            number = len(proxy_list)-2
+        for i in range(2,number+2):
+            proxy_info = proxy_list[i].text.strip().split(" ")
+            result.append([proxy_info[3],proxy_info[4],"SOCKS5"])
+        print(driver)
+
     return result

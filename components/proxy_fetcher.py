@@ -57,9 +57,8 @@ class ProxyFetcher(object):
                     self.proxys.extend(get_data_on_profile(server['name'],driver,self.candidate))
                 except Exception as e:
                     pass
-
-            print("Got Proxies:")
-            print((self.proxys))
+            logging.info("Got Proxies:")
+            logging.info((self.proxys))
         except Exception as e:
             logging.error("{}".format(e))
 

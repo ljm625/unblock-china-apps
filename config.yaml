@@ -48,7 +48,7 @@ validate_url: "http://ip-api.com/json/"
 speedtest_url : "http://music.163.com/test"
 speedtest_url_https : "https://music.163.com"
 
-https_enabled : true
+https_enabled : false
 
 # HTTPS Related options
 

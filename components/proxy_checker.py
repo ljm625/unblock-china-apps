@@ -58,6 +58,7 @@ class ProxyChecker(object):
                 return {"http": "socks5://{}:{}".format(proxy[0],proxy[1]),
                         "https": "socks5://{}:{}".format(proxy[0],proxy[1])}
         try:
+            logging.info("Checking PROXY: {}".format(str(build_proxy())))
             if (proxy[2]=='HTTP' or proxy[2]=="HTTPS") and self.enable_http:
                 pass
             elif proxy[2]=='SOCKS5' and self.enable_socks:

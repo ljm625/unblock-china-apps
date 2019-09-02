@@ -27,6 +27,8 @@ async def handle_client(reader,writer):
             for site in black_list:
                 if site in dest[0]:
                     use_proxy=True
+        elif helper.always_use_proxy:
+            use_proxy=True
         else:
             print("WARNING : Strange. It doesn't looks like a HTTP Request")
             use_proxy = True

@@ -100,11 +100,12 @@ if __name__ == '__main__':
         sleep(5)
         logging.info("INFO : Waiting for best proxy to be find...")
 
+    print('Serving on {}:{}'.format(config["proxy_address"],config["proxy_port"]))
+
     loop = asyncio.get_event_loop()
     coro = asyncio.start_server(handle_client, config["proxy_address"], config["proxy_port"], loop=loop)
     server = loop.run_until_complete(coro)
 
-    print('Serving on {}'.format(server.sockets[0].getsockname()))
 
     try:
         loop.run_forever()

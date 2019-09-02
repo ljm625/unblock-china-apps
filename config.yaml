@@ -46,7 +46,7 @@ validate_url: "http://ip-api.com/json/"
 # HTTPS Related options
 
 speedtest_url : "http://music.163.com/test"
-speedtest_url_https : "https://music.163.com"
+speedtest_url_https : "https://www.baidu.com"
 
 https_enabled : false
 
@@ -85,8 +85,10 @@ disable_proxy : false
 # Enable socks proxy
 enable_socks : true
 # Enable http/https proxy
-enable_http : false
+enable_http : true
 
+# Always enable proxy forwarding
+always_forward_proxy : false
 
 
 # Auto Generate Infos.
